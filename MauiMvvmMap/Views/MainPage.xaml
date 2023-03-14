@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:cc="clr-namespace:MauiMvvmMap.Controls"
+             xmlns:converters="clr-namespace:MauiMvvmMap.Converters"
+             xmlns:models="clr-namespace:MauiMvvmMap.Models"
+             x:Class="MauiMvvmMap.Views.MainPage">
+
+    <ContentPage.Resources>
+        <converters:StringToLocationConverter x:Key="stringToLocation" />
+        <converters:RecordToIconConverter x:Key="recordToIcon" />
+    </ContentPage.Resources>
+
+    <cc:MvvmMap x:Name="mvvmMap1" ItemsSource="{Binding Records}" MapType="{Binding MapType, Mode=OneTime}" MapSpan="{Binding MapSpan}" IsShowingUser="True">
+        <cc:MvvmMap.ItemTemplate>
+            <DataTemplate x:DataType="models:Record">
+                <cc:CustomPin Location="{Binding Location, Converter={StaticResource stringToLocation}}"
+                              Icon="{Binding Converter={StaticResource recordToIcon}}"
+                              Label="{Binding Name}"
+                              Map="{Reference mvvmMap1}" />
+            </DataTemplate>
+        </cc:MvvmMap.ItemTemplate>
+        <cc:MvvmMap.Behaviors>
+            <toolkit:EventToCommandBehavior EventName="Loaded" Command="{Binding LoadedCommand}" />
+            <toolkit:EventToCommandBehavior x:TypeArguments="MapClickedEventArgs" EventName="MapClicked" Command="{Binding MapClickedCommand}" />
+        </cc:MvvmMap.Behaviors>
+    </cc:MvvmMap>
+    
+</ContentPage>
